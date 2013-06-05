@@ -3,11 +3,12 @@ import ContactBook as ContactBook
 import System.IO
 import Data.Char
 import Contact
+import Group
 import Utils
 
 
 main = do
-	putStrLn "--------------------------------------------------------CONTACT BOOK--------------------------------------------------------"  
+	putStrLn "-----------------------------------------------------------CONTACT BOOK-----------------------------------------------------------"  
 	putStrLn " ";  
 	putStrLn "Projekt SPOP 2013 : Książka adresowa"  
 	putStrLn "Malwina Kowalczyk"  
@@ -20,13 +21,13 @@ main = do
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 mainMenu book@(ContactBook contacts groups) = do
-	putStrLn "--------------------------------------------------------CONTACT BOOK--------------------------------------------------------"  
+	putStrLn "-----------------------------------------------------------CONTACT BOOK-----------------------------------------------------------"  
 	putStrLn "1. Contacts"  
 	putStrLn "2. Groups" 
 	putStrLn "3. Search contacts"
 	putStrLn "4. Today's birthday"
 	putStrLn "5. Exit"
-	putStrLn "--------------------------------------------------------CONTACT BOOK--------------------------------------------------------"
+	putStrLn "-----------------------------------------------------------CONTACT BOOK-----------------------------------------------------------"
 	putStrLn "Press 'B' to return to the previous menu."  
 	putStr "Press '1'...'5' to choose option:"
 
@@ -51,14 +52,12 @@ mainMenu book@(ContactBook contacts groups) = do
 
 contactsMenu book@(ContactBook contacts groups) = do
 	putStrLn ""
-	putStrLn "-----------------------------------------------------------CONTACTS-----------------------------------------------------------"  
-
-
-	putStrLn "1. Show All Contacts"  
+	putStrLn "-------------------------------------------------------------CONTACTS-------------------------------------------------------------"  
+	putStrLn "1. List All Contacts"  
 	putStrLn "2. Add Contact"  
 	putStrLn "3. Delete Contact" 
 	putStrLn "4. Edit Contact"
-	putStrLn "-----------------------------------------------------------CONTACTS-----------------------------------------------------------"  
+	putStrLn "-------------------------------------------------------------CONTACTS-------------------------------------------------------------"  
 	putStrLn "Press 'B' to return to the previous menu."  
 	putStr "Press '1'...'4' to choose option:"
 
@@ -72,79 +71,75 @@ contactsMenu book@(ContactBook contacts groups) = do
 		"B" -> mainMenu book
 		"b"	-> mainMenu book
 		otherwise -> do
-			putStr "Wrong input. Press '1'...'3' to choose option:"
+			putStr "Wrong input. Press '1'...'4' to choose option:"
 			contactsMenu(ContactBook contacts groups)
-
-
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						GROUPS MENU
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-groupsMenu (ContactBook contacts groups) = do
+groupsMenu book@(ContactBook contacts groups) = do
 	putStrLn ""
-	putStrLn "-----------------------------------------------------------GROUPS-----------------------------------------------------------"  
+	putStrLn "--------------------------------------------------------------GROUPS--------------------------------------------------------------"  
 	putStrLn "1. List all groups"  
-	putStrLn "2.  Show group"  
+	putStrLn "2. Show group members"  
 	putStrLn "3. Add Group"  
 	putStrLn "4. Delete Group" 
 	putStrLn "5. Rename Group"
 	putStrLn "6. Join Groups"
-	putStrLn "-----------------------------------------------------------GROUPS-----------------------------------------------------------"  
-	putStrLn "Press 'Q' to quit and return to the previous menu."  
-	putStr "Press '1'...'3' to choose option:"
+	putStrLn "--------------------------------------------------------------GROUPS--------------------------------------------------------------"  
+	putStrLn "Press 'B' to quit and return to the previous menu."  
+	putStr "Press '1'...'6' to choose option:"
 	
 	input <- getLine
 
 	case input of
-		"1"	-> showAllGroups(ContactBook contacts groups)  
-		"2"	-> showGroupForm(ContactBook contacts groups)  
-		"3"	-> addGroupForm(ContactBook contacts groups)  
-		"4"	-> deleteGroupForm(ContactBook contacts groups)  
-		"5"	-> editGroupForm(ContactBook contacts groups)
-		"6"	-> joinGroupsForm(ContactBook contacts groups)
-		"B"  	-> mainMenu(ContactBook contacts groups)
-		"b"	-> mainMenu(ContactBook contacts groups)
+		"1"	-> showAllGroups book  
+		"2"	-> showGroupForm book  
+		"3"	-> addGroupForm book  
+		"4"	-> deleteGroupForm book  
+		"5"	-> editGroupForm book
+		"6"	-> joinGroupsForm book
+		"B" -> mainMenu book
+		"b"	-> mainMenu book
 		otherwise -> do
-			putStr "Wrong input. Press '1'...'3' to choose option:"
+			putStr "Wrong input. Press '1'...'6' to choose option:"
 			groupsMenu(ContactBook contacts groups)
-
-
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						SEARCH MENU
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-searchMenu (ContactBook contacts groups) = do
+searchMenu book@(ContactBook contacts groups) = do
 	putStrLn ""
-	putStrLn "-----------------------------------------------------------SEARCH CONTACTS-----------------------------------------------------------"  
+	putStrLn "---------------------------------------------------------SEARCH CONTACTS----------------------------------------------------------"  
 	putStrLn "1. By Id"  
 	putStrLn "2. By Surname" 
 	putStrLn "3. By Company" 
 	putStrLn "4. By Email"
 	putStrLn "5. By Phone Number"
 	putStrLn "6. By Group"
-	putStrLn "-----------------------------------------------------------SEARCH CONTACTS-----------------------------------------------------------"  
-	putStrLn "Press 'Q' to quit and return to the previous menu."  
-	putStrLn "Press '1'...'5' to choose option."
+	putStrLn "---------------------------------------------------------SEARCH CONTACTS----------------------------------------------------------"  
+	putStrLn "Press 'B' to quit and return to the previous menu."  
+	putStr "Press '1'...'6' to choose option:"
 
 	input <- getLine
 	putStr "Value: "
 	value <-getLine
-	putStrLn "-----------------------------------------------------------SEARCH RESULTS-----------------------------------------------------------"
+	putStrLn "----------------------------------------------------------SEARCH RESULTS----------------------------------------------------------"
 	case input of
-		"1"	-> print (getContactById (ContactBook contacts groups)  input)
-		"2"	-> mapM_ print (getContactListBySurname (ContactBook contacts groups)  input)
-		"3"	-> mapM_ print (getContactListByCompany (ContactBook contacts groups)  input)
-		"4"	-> mapM_ print (getContactListByEmail (ContactBook contacts groups)  input)
-		"5"	-> mapM_ print (getContactListByPhoneNumber (ContactBook contacts groups)  input)
-		"6"	-> mapM_  print (getContactListByGroupName (ContactBook contacts groups)  input)
-		"B"  -> mainMenu(ContactBook contacts groups) 
-		"b"	-> mainMenu(ContactBook contacts groups)
+		"1"	-> print (getContactById book  input)
+		"2"	-> mapM_ print (getContactListBySurname book  input)
+		"3"	-> mapM_ print (getContactListByCompany book  input)
+		"4"	-> mapM_ print (getContactListByEmail  book  input)
+		"5"	-> mapM_ print (getContactListByPhoneNumber  book  input)
+		"6"	-> mapM_  print (getContactListByGroupName  book  input)
+		"B"  -> mainMenu book 
+		"b"	-> mainMenu book
 		otherwise -> do
-			putStr "Wrong input. Press '1'...'4' to choose option:"
+			putStr "Wrong input. Press '1'...'6' to choose option:"
 	searchMenu(ContactBook contacts groups)
 
 
@@ -153,7 +148,7 @@ searchMenu (ContactBook contacts groups) = do
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 birthdayMenu(ContactBook contacts groups)  = do
 	putStrLn ""
-	putStrLn "-----------------------------------------------------------TODAY'S BIRTHDAY-----------------------------------------------------------"  
+	putStrLn "---------------------------------------------------------TODAY'S BIRTHDAY---------------------------------------------------------"  
 
 
 
@@ -163,51 +158,55 @@ birthdayMenu(ContactBook contacts groups)  = do
 --						CONTACT ACTIONS
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 showAllContacts(ContactBook contacts groups) = do
-	putStrLn "------------------------------------------------------------ALL CONTACTS------------------------------------------------------------"
+	putStrLn "-----------------------------------------------------------ALL CONTACTS-----------------------------------------------------------"
 	mapM_ print contacts
-	putStrLn "------------------------------------------------------------ALL CONTACTS------------------------------------------------------------"
+	putStrLn "-----------------------------------------------------------ALL CONTACTS-----------------------------------------------------------"
 	contactsMenu(ContactBook contacts groups)
 
 addContactForm book@(ContactBook contacts groups) = do
-	putStrLn "New contact:"
+	putStrLn "ADD CONTACT:"
 	putStrLn "ID:"
 	ident <- getLine
-	if  not (Utils.validNumber ident) then do
-		putStrLn "ID should be a number. Try again"
-		addContactForm book
+	if ident `elem` ["b", "B"] then do
+		contactsMenu book	
 	else do
-		if isAMemberById book ident then do
-			putStrLn "ID is already used"
+		if  not (Utils.validNumber ident) then do
+			putStrLn "ID should be a number. Try again"
 			addContactForm book
 		else do
-			putStrLn "First name:"
-			name <- getLine
-			if not (Utils.validString name) then do addContactInputError book "First name should contain letters only."
+			if isAMemberById book ident then do
+				putStrLn "ID is already used"
+				addContactForm book
 			else do
-				putStrLn "Surname:"
-				surname <- getLine
-				if not (Utils.validString surname) then do addContactInputError book "Surname should contain letters only."
-				else do 
-					putStrLn "Company:"
-					company <- getLine
-					if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
-					else do
-						putStrLn "Email:"
-						email <- getLine
-						if not (Utils.validString email) then do addContactInputError book "Incorrect email address."
+				putStrLn "First name:"
+				name <- getLine
+				if not (Utils.validString name) then do addContactInputError book "First name should contain letters only."
+				else do
+					putStrLn "Surname:"
+					surname <- getLine
+					if not (Utils.validString surname) then do addContactInputError book "Surname should contain letters only."
+					else do 
+						putStrLn "Company:"
+						company <- getLine
+						if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
 						else do
-							putStrLn "Phone Number:"
-							phoneNumber <- getLine
-							if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
+							putStrLn "Email:"
+							email <- getLine
+							if not (Utils.validString email) then do addContactInputError book "Incorrect email address."
 							else do
-								putStrLn "Birthdate (dd mm yyyy):"
-								birthday <- getLine
-								if not (Utils.validString birthday) then do addContactInputError book "Date format incorrect (dd mm yyyy)."
+								putStrLn "Phone Number:"
+								phoneNumber <- getLine
+								if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
 								else do
-									let newContact = Contact.Contact ident name surname company email phoneNumber birthday
-									putStrLn "New contact added:"
-									print newContact
-									contactsMenu(addContact book newContact)
+									putStrLn "Birthdate (dd mm yyyy):"
+									birthday <- getLine
+									if not (Utils.validString birthday) then do addContactInputError book "Date format incorrect (dd mm yyyy)."
+									else do
+										let newContact = Contact.Contact ident name surname company email phoneNumber birthday
+										putStrLn "Success."
+										putStrLn "New contact added:"
+										print newContact
+										contactsMenu(addContact book newContact)
 
 addContactInputError book@(ContactBook contacts groups) message = do
 	putStr "Couldn't add contact: "
@@ -215,88 +214,138 @@ addContactInputError book@(ContactBook contacts groups) message = do
 	addContactForm book
 
 deleteContactForm book@(ContactBook contacts groups)  = do
-	putStr "Delete contact with ID: "
+	putStr "DELETE CONTACT with ID: "
 	ident <- getLine
-	if isAMemberById book ident then do
-		let contactToDelete = getContactById book ident
-		print (removeContact book (getContactById book ident))
-		contactsMenu(removeContact book contactToDelete)
+	if ident `elem` ["b", "B"] then do
+		contactsMenu book	
 	else do
-		putStrLn "Contact with the given ID doesn't exist. Try again."
-		deleteContactForm book
+		if isAMemberById book ident then do
+			let contactToDelete = getContactById book ident
+			putStrLn "Success."
+			putStrLn "Contact deleted:"
+			print contactToDelete
+			contactsMenu(removeContact book contactToDelete)
+		else do
+			putStrLn "Contact with the given ID doesn't exist. Try again."
+			deleteContactForm book
 
 editContactForm book@(ContactBook contacts groups) = do
-	putStr "Edit contact with ID: "
-	ident <- getLine
-	if isAMemberById book ident then do
-		putStrLn "Choose Attribute:"
-		putStrLn "0. Name"  
-		putStrLn "1. Surname"  
-		putStrLn "2. Company"  
-		putStrLn "3. Phone Number" 
-		putStrLn "4. Email" 
-		putStrLn "5. Birthdate" 
-		putStrLn "6. Add group membership"
-		putStrLn "6. Remove group membership"
 
-		attr <-getLine
-		putStrLn "New value: "
-		value <- getLine
-		contactsMenu(editContact book ident attr value)
+	putStr "EDIT CONTACT with ID: "
+	ident <- getLine
+	if ident `elem` ["b", "B"] then do
+			contactsMenu book	
 	else do
-		putStrLn "Contact with the given ID doesn't exist. Try again."
-		editContactForm book
+		if isAMemberById book ident then do
+			putStrLn "Choose Attribute:"
+			putStrLn "1. Name"  
+			putStrLn "2. Surname"  
+			putStrLn "3. Company"  
+			putStrLn "4. Phone Number" 
+			putStrLn "5. Email" 
+			putStrLn "6. Birthdate" 
+			putStrLn "7. Add group membership"
+			putStrLn "8. Remove group membership"
+
+			putStrLn "Press 'B' to quit and return to the previous menu."  
+			putStr "Press '1'...'8' to choose option:"
+
+			attr <-getLine
+			if attr `elem` ["b", "B"] then do
+				contactsMenu book	
+			else do
+				putStrLn "New value: "
+				value <- getLine
+				if (attr `elem` ["1","2","3","5","6"] &&  not (Utils.validString value)) then do
+					putStrLn "Attribute should contain letters only. Try again."
+					editContactForm book
+				else do
+					if (attr `elem` ["4"]  && not (Utils.validNumber value)) then do
+						putStrLn "Attribute should contain digits only. Try again."
+						editContactForm book
+					else do
+						if attr `elem` ["7", "8"]  && not(groupExistsByName book value) then do
+							putStrLn "Group with the given name doesn't exist. Try again."
+							editContactForm book
+						else do
+							putStrLn "Success."
+							putStrLn "Contact modified:"
+							let result = editContact book ident attr value
+							print (getContactById result ident)
+							contactsMenu(result)
+		else do
+			putStrLn "Contact with the given ID doesn't exist. Try again."
+			editContactForm book
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						GROUP ACTIONS
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-showAllGroups(ContactBook contacts groups)  = do
-	putStrLn "------------------------------------------------------------ALL------------------------------------------------------------"
-	mapM_ print groups
-	putStrLn "------------------------------------------------------------ALL------------------------------------------------------------"
-	groupsMenu(ContactBook contacts groups)
+showAllGroups book@(ContactBook contacts groups)  = do
+	printGroups book
+	groupsMenu book
 
-showGroupForm(ContactBook contacts groups) = do
-	putStrLn "Show group"
-	putStr "Group name:"
-	value <- getLine
-	print (getGroupByName (ContactBook contacts groups) value)
-	groupsMenu(ContactBook contacts groups)
+printGroups(ContactBook contacts groups) = do
+	putStrLn "------------------------------------------------------------ALL GROUPS------------------------------------------------------------"
+	mapM_ (print.Group.name) groups
+	putStrLn "------------------------------------------------------------ALL GROUPS------------------------------------------------------------"
 
 
-addGroupForm(ContactBook contacts groups) = do
-	putStrLn "Create new group"
-	putStr "Group name:"
-	value <- getLine
-	groupsMenu(addEmptyGroup (ContactBook contacts groups) value)
-
-deleteGroupForm(ContactBook contacts groups)  = do
-	putStrLn "Delete group"
-	putStr "Group name: "
-	value <- getLine
-	groupsMenu(removeGroup (ContactBook contacts groups) value)
-
-editGroupForm(ContactBook contacts groups) = do
-	putStrLn "Rename group"
-	putStr "Group name: "
+showGroupForm book@(ContactBook contacts groups) = do
+	printGroups book
+	putStr "SHOW GROUP with NAME:"
 	name <- getLine
-	putStr "New name: "
-	newName<- getLine
-	groupsMenu(renameGroup(ContactBook contacts groups) name newName)
+	if groupExistsByName book name then do
+		print (getGroupByName book name)
+		groupsMenu book
+	else do
+		putStrLn "The group with the given name doesn't exist. Try again."
+		showGroupForm book
 
-joinGroupsForm(ContactBook contacts groups) = do
-	putStrLn "Join groups"
+addGroupForm book@(ContactBook contacts groups) = do
+	printGroups book
+	putStr "ADD GROUP with NAME:"
+	name <- getLine
+	if not (groupExistsByName book name) then do
+		groupsMenu(addEmptyGroup book name)
+	else do
+		putStrLn "The group with the given name already exists. Try again with different name."
+		addGroupForm book
+
+deleteGroupForm book@(ContactBook contacts groups)  = do
+	printGroups book
+	putStr "DELETE GROUP with NAME:"
+	name <- getLine
+	if groupExistsByName book name then do
+		groupsMenu(removeGroup book name)
+	else do
+		putStrLn "The group with the given name doesn't exist. Try again."
+		deleteGroupForm book
+
+
+editGroupForm book@(ContactBook contacts groups) = do
+	printGroups book
+	putStr "RENAME GROUP with NAME:"
+	name <- getLine
+	if groupExistsByName book name then do
+		putStr "New name: "
+		newName<- getLine
+		groupsMenu(renameGroup book name newName)
+	else do
+		putStrLn "The group with the given name doesn't exist. Try again."
+		editGroupForm book
+
+joinGroupsForm book@(ContactBook contacts groups) = do
+	printGroups book
+	putStrLn "JOIN GROUPS"
 	putStr "First group: "
 	group1 <- getLine
-	putStr "Second group: "
-	group2<- getLine
-	groupsMenu(joinGroups(ContactBook contacts groups) group1 group2)
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---						GROUP ACTIONS
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+	if groupExistsByName book group1 then do
+		putStr "Second group: "
+		group2<- getLine
+		groupsMenu(joinGroups book group1 group2)
+	else do
+		putStrLn "The group with the given name doesn't exist. Try again."
+		joinGroupsForm book		
 
 
 

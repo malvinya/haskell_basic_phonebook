@@ -21,18 +21,18 @@ editContact book@(ContactBook contacts groups) ident attr value =
 	let 
 		contact = getContactById (book) ident
 	in case attr of
-		"0"	-> addContact (removeContact book contact) (Contact.changeFirstname contact value)
-		"1"	-> addContact (removeContact book contact) (Contact.changeSurname contact value)
-		"2"	-> addContact (removeContact book contact) (Contact.changeCompany contact value )
-		"3"	-> addContact (removeContact book contact) (Contact.changePhoneNumber contact value)
-		"4"	-> addContact (removeContact book contact) (Contact.changeEmail contact value)
-		"5"       -> addContact (removeContact book contact) (Contact.changeBirthday contact value)
-		"6"       -> let 
+		"1"	-> addContact (removeContact book contact) (Contact.changeFirstname contact value)
+		"2"	-> addContact (removeContact book contact) (Contact.changeSurname contact value)
+		"3"	-> addContact (removeContact book contact) (Contact.changeCompany contact value )
+		"4"	-> addContact (removeContact book contact) (Contact.changePhoneNumber contact value)
+		"5"	-> addContact (removeContact book contact) (Contact.changeEmail contact value)
+		"6"       -> addContact (removeContact book contact) (Contact.changeBirthday contact value)
+		"7"       -> let 
 				originalGroup = getGroupByName  book value
 				updatedGroup = Group.addMember originalGroup contact
 				groupName = Group.name originalGroup
 			in addGroup(removeGroup book groupName) updatedGroup
-		"7" 	-> let 
+		"8" 	-> let 
 				originalGroup =  getGroupByName  book value
 				updatedGroup = Group.removeMember originalGroup contact
 				groupName = Group.name originalGroup
@@ -121,4 +121,7 @@ getGroupByName (ContactBook c [] ) name  = error "No grup with the given name"
 getGroupByName (ContactBook c (first:groups)) name 
 						| Group.name first == name 	= first
 						| otherwise			= getGroupByName (ContactBook c groups) name
+
+groupExistsByName::ContactBook -> String -> Bool
+groupExistsByName (ContactBook c groups) name = any(\x -> Group.name  x== name) groups 
 
