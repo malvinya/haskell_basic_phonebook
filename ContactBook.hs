@@ -5,7 +5,7 @@ import Utils as Utils
 
 data ContactBook = ContactBook { contacts :: [Contact]
                                                     ,groups :: [Group]
-                                                    } deriving (Show)
+                                                    } deriving (Show, Read)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						CONTACT LIST
@@ -85,6 +85,11 @@ getContactListByIdList :: ContactBook -> [String] -> [Contact]
 getContactListByIdList (ContactBook [] g) ids = []
 getContactListByIdList (ContactBook c g) [] = []
 getContactListByIdList book@(ContactBook contactList g) (first:ids) = (getContactById book first):getContactListByIdList book ids
+
+getContactListByTodaysBirthDay::ContactBook->String->[Contact]
+getContactListByTodaysBirthDay  (ContactBook [] g) date = []
+getContactListByTodaysBirthDay  (ContactBook contacts g) date =filter p contacts
+	where  p x = not(isDateBirthdailyEqual (Contact.birthdate x ) date)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						GROUP LIST

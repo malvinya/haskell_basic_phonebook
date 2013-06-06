@@ -3,7 +3,7 @@ import Contact as Contact
   
 data Group = Group { name :: String
 	                      , members :: [String]
-	                      } deriving (Show)
+	                      } deriving (Show, Read)
 
 addMember:: Group -> Contact -> Group
 addMember (Group name members) person= Group name ((Contact.ident person):members)

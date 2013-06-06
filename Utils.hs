@@ -75,3 +75,7 @@ countChar c (x:xs)
 date :: IO String 
 date = do
 	fmap (showGregorian . utctDay) getCurrentTime
+
+isDateBirthdailyEqual::String -> String -> Bool
+isDateBirthdailyEqual [] [] = False
+isDateBirthdailyEqual dateString1 dateString2 = validDate dateString1 && validDate dateString2 && (drop 5 dateString1) == (drop 5 dateString2)

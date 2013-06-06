@@ -6,11 +6,11 @@ data Contact = Contact { ident :: String
 	                      , phoneNumber :: String
 	                      , email :: String
 	                      , birthdate :: String
-	                      } deriving (Show,Eq)
+	                      } deriving (Show,Read,Eq)
 
 printContact (Contact ident name surname company number email  birthdate) = do
-	let string = ident ++ ". Name: " ++ show name ++ " " ++ show surname ++ " Company: " ++ show company ++ " Phone: " ++ show number ++ 
-		" Email: " ++ show email ++ " "++ " Birthday: " ++ show birthdate 
+	let string = ident ++ ". Name: " ++ name ++ " " ++ surname ++ " Company: " ++ company ++ " Phone: " ++ number ++ 
+		" Email: " ++ email ++ " "++ " Birthday: " ++ birthdate 
 	putStrLn string
 
 fullName::Contact -> String
