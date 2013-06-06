@@ -6,15 +6,15 @@ data Contact = Contact { ident :: String
 	                      , phoneNumber :: String
 	                      , email :: String
 	                      , birthdate :: String
-	                      } deriving (Eq)
+	                      } deriving (Show,Eq)
 
-instance Show Contact where
-  show (Contact ident name surname company number email  birthdate) = show ident ++ ". Name: " ++ 
-                                                                                show name ++ " " ++ show surname ++
-                                                                                " Company: " ++ show company ++ " Phone: " ++ 
-                                                                                show number ++ " Email: " ++ show email ++ " "++
-                                                                                " Birthday: " ++ show birthdate 
+printContact (Contact ident name surname company number email  birthdate) = do
+	let string = ident ++ ". Name: " ++ show name ++ " " ++ show surname ++ " Company: " ++ show company ++ " Phone: " ++ show number ++ 
+		" Email: " ++ show email ++ " "++ " Birthday: " ++ show birthdate 
+	putStrLn string
 
+fullName::Contact -> String
+fullName (Contact  ident  firstname surname _ _ _ _ ) = ident++". "++firstname++" "++surname
 changeFirstname :: Contact -> String -> Contact
 changeFirstname (Contact  atr1 old atr3 atr4 atr5 atr6 atr7) new =  Contact atr1 new atr3 atr4 atr5 atr6 atr7
 changeSurname :: Contact -> String -> Contact
