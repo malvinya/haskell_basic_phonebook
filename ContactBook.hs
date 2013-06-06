@@ -115,6 +115,9 @@ joinGroups book@(ContactBook contacts groups) groupName1 groupName2 =
 		group2 = getGroupByName book groupName2
 		newGroup = Group.join group1 group2 (groupName1++groupName2)
 	in addGroup(removeGroup (removeGroup book groupName1) groupName2) newGroup
+showGroupMembers::ContactBook->String->[String]
+showGroupMembers book@(ContactBook contacts groups) name =  map (\ident -> Contact.firstname (getContactById book ident) ++ Contact.surname (getContactById book ident)) 
+									(Group.members (getGroupByName book  name))
 
 getGroupByName :: ContactBook -> String -> Group
 getGroupByName (ContactBook c [] ) name  = error "No grup with the given name"

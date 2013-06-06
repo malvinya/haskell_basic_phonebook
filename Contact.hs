@@ -6,14 +6,14 @@ data Contact = Contact { ident :: String
 	                      , phoneNumber :: String
 	                      , email :: String
 	                      , birthdate :: String
-	                      } deriving (Show, Eq)
+	                      } deriving (Eq)
 
---instance Show Contact where
---  show (Contact ident name surname number email company birthdate) = "Contact: " ++ show ident ++ "\n" ++ 
---                                                                                show name ++ " " ++ show surname ++ "\n" ++ 
---                                                                                "Company: " ++ show company ++ "\n" ++
---                                                                                show number ++ ", " ++ show email ++ "\n"++
---                                                                                "birthday: " ++ show birthdate ++ "\n"
+instance Show Contact where
+  show (Contact ident name surname company number email  birthdate) = show ident ++ ". Name: " ++ 
+                                                                                show name ++ " " ++ show surname ++
+                                                                                " Company: " ++ show company ++ " Phone: " ++ 
+                                                                                show number ++ " Email: " ++ show email ++ " "++
+                                                                                " Birthday: " ++ show birthdate 
 
 changeFirstname :: Contact -> String -> Contact
 changeFirstname (Contact  atr1 old atr3 atr4 atr5 atr6 atr7) new =  Contact atr1 new atr3 atr4 atr5 atr6 atr7

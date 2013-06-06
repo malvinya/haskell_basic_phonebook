@@ -126,21 +126,25 @@ searchMenu book@(ContactBook contacts groups) = do
 	putStr "Press '1'...'6' to choose option:"
 
 	input <- getLine
-	putStr "Value: "
-	value <-getLine
-	putStrLn "----------------------------------------------------------SEARCH RESULTS----------------------------------------------------------"
-	case input of
-		"1"	-> print (getContactById book  input)
-		"2"	-> mapM_ print (getContactListBySurname book  input)
-		"3"	-> mapM_ print (getContactListByCompany book  input)
-		"4"	-> mapM_ print (getContactListByEmail  book  input)
-		"5"	-> mapM_ print (getContactListByPhoneNumber  book  input)
-		"6"	-> mapM_  print (getContactListByGroupName  book  input)
-		"B"  -> mainMenu book 
-		"b"	-> mainMenu book
-		otherwise -> do
-			putStr "Wrong input. Press '1'...'6' to choose option:"
-	searchMenu(ContactBook contacts groups)
+	if input `elem` ["b", "B"] then do
+		mainMenu book
+	else do
+		putStr "Value: "
+		value <-getLine
+		if value `elem` ["b", "B"] then do
+			mainMenu book	
+		else do
+			putStrLn "----------------------------------------------------------SEARCH RESULTS----------------------------------------------------------"
+			case input of
+				"1"	-> print (getContactById book  value)
+				"2"	-> mapM_ print (getContactListBySurname book  value)
+				"3"	-> mapM_ print (getContactListByCompany book  value)
+				"4"	-> mapM_ print (getContactListByEmail  book  value)
+				"5"	-> mapM_ print (getContactListByPhoneNumber  book  value)
+				"6"	-> mapM_  print (getContactListByGroupName  book  value)
+				otherwise -> do
+					putStr "Wrong input. Press '1'...'6' to choose option:"
+			searchMenu(ContactBook contacts groups)
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -190,19 +194,19 @@ addContactForm book@(ContactBook contacts groups) = do
 						company <- getLine
 						if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
 						else do
-							putStrLn "Email:"
-							email <- getLine
-							if not (Utils.validString email) then do addContactInputError book "Incorrect email address."
+							putStrLn "Phone Number:"
+							phoneNumber <- getLine
+							if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
 							else do
-								putStrLn "Phone Number:"
-								phoneNumber <- getLine
-								if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
+								putStrLn "Email:"
+								email <- getLine
+								if not (Utils.validString email) then do addContactInputError book "Incorrect email address."
 								else do
 									putStrLn "Birthdate (dd mm yyyy):"
 									birthday <- getLine
 									if not (Utils.validString birthday) then do addContactInputError book "Date format incorrect (dd mm yyyy)."
 									else do
-										let newContact = Contact.Contact ident name surname company email phoneNumber birthday
+										let newContact = Contact.Contact ident name surname company phoneNumber email birthday
 										putStrLn "Success."
 										putStrLn "New contact added:"
 										print newContact
@@ -295,7 +299,10 @@ showGroupForm book@(ContactBook contacts groups) = do
 	putStr "SHOW GROUP with NAME:"
 	name <- getLine
 	if groupExistsByName book name then do
-		print (getGroupByName book name)
+		putStrLn name
+		putStrLn "Members:"
+		print (showGroupMembers book name)
+		--print (getGroupByName book name)
 		groupsMenu book
 	else do
 		putStrLn "The group with the given name doesn't exist. Try again."
