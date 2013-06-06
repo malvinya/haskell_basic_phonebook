@@ -150,13 +150,17 @@ searchMenu book@(ContactBook contacts groups) = do
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						BIRTHDAY MENU
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-birthdayMenu(ContactBook contacts groups)  = do
+birthdayMenu book@(ContactBook contacts groups)  = do
 	putStrLn ""
-	putStrLn "---------------------------------------------------------TODAY'S BIRTHDAY---------------------------------------------------------"  
-
-
-
-
+	putStrLn "---------------------------------------------------------TODAY'S BIRTHDAY---------------------------------------------------------" 
+	dateString <-Utils.date
+	let birthdayList = getContactListByBirthdate book dateString
+	if null (birthdayList) then do 
+		putStrLn "Such a sad day. Nobody's celebrating!"
+	else do
+		mapM_ print birthdayList 
+		putStrLn "Remember to send them best regards from me!"
+	mainMenu book
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						CONTACT ACTIONS
@@ -202,9 +206,9 @@ addContactForm book@(ContactBook contacts groups) = do
 								email <- getLine
 								if not (Utils.validString email) then do addContactInputError book "Incorrect email address."
 								else do
-									putStrLn "Birthdate (dd mm yyyy):"
+									putStrLn "Birthdate (yyyy-mm-dd):"
 									birthday <- getLine
-									if not (Utils.validString birthday) then do addContactInputError book "Date format incorrect (dd mm yyyy)."
+									if not (Utils.validDate birthday) then do addContactInputError book "Date format incorrect (yyyy-mm-dd)."
 									else do
 										let newContact = Contact.Contact ident name surname company phoneNumber email birthday
 										putStrLn "Success."
@@ -260,23 +264,27 @@ editContactForm book@(ContactBook contacts groups) = do
 			else do
 				putStrLn "New value: "
 				value <- getLine
-				if (attr `elem` ["1","2","3","5","6"] &&  not (Utils.validString value)) then do
+				if (attr `elem` ["1","2","3","5"] &&  not (Utils.validString value)) then do
 					putStrLn "Attribute should contain letters only. Try again."
 					editContactForm book
 				else do
 					if (attr `elem` ["4"]  && not (Utils.validNumber value)) then do
-						putStrLn "Attribute should contain digits only. Try again."
+						putStrLn "Phone number should contain digits only. Try Again."
 						editContactForm book
 					else do
-						if attr `elem` ["7", "8"]  && not(groupExistsByName book value) then do
-							putStrLn "Group with the given name doesn't exist. Try again."
+						if (attr `elem` ["6"]  && not (Utils.validDate value)) then do
+							putStrLn "Wrong date format. It should be: yyyy-mm-dd Try again."
 							editContactForm book
 						else do
-							putStrLn "Success."
-							putStrLn "Contact modified:"
-							let result = editContact book ident attr value
-							print (getContactById result ident)
-							contactsMenu(result)
+							if attr `elem` ["7", "8"]  && not(groupExistsByName book value) then do
+								putStrLn "Group with the given name doesn't exist. Try again."
+								editContactForm book
+							else do
+								putStrLn "Success."
+								putStrLn "Contact modified:"
+								let result = editContact book ident attr value
+								print (getContactById result ident)
+								contactsMenu(result)
 		else do
 			putStrLn "Contact with the given ID doesn't exist. Try again."
 			editContactForm book

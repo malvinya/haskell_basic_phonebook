@@ -1,6 +1,7 @@
 module ContactBook where
 import Contact as Contact
 import Group as Group
+import Utils as Utils
 
 data ContactBook = ContactBook { contacts :: [Contact]
                                                     ,groups :: [Group]
@@ -84,8 +85,6 @@ getContactListByIdList :: ContactBook -> [String] -> [Contact]
 getContactListByIdList (ContactBook [] g) ids = []
 getContactListByIdList (ContactBook c g) [] = []
 getContactListByIdList book@(ContactBook contactList g) (first:ids) = (getContactById book first):getContactListByIdList book ids
-
---getTodayBirthdays :: ContactBook -> [Contact]
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						GROUP LIST
