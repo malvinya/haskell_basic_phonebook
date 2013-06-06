@@ -19,7 +19,8 @@ isAMember::Group ->Contact ->Bool
 isAMember (Group name members) person = any (==Contact.ident person) members
 
 join::Group ->Group -> String -> Group
-join (Group name1 members1) (Group name2 members2) newName = Group newName (members1++members2)
+join (Group name1 members1) (Group name2 members2) newName =  Group newName  (members2++(filter p members1))
+	where p id = not (id `elem` members2)
 
 rename::Group->String->Group
 rename (Group name members) newName = Group newName members
