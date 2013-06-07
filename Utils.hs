@@ -18,6 +18,7 @@ validString []  = False
 validString [x] = isAlpha x
 validString (x:xs) = if isAlpha x then validString xs else False
 
+-- date format: yyyy-mm-dd
 validDate :: String -> Bool
 validDate [] = False
 validDate dateString= if not((countChar '-' dateString )==2) then False
@@ -50,18 +51,20 @@ validEmail input = '@' `elem` input
 --						UTILS
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+-- unsafe conversion from String to Int, use only after confirmation with validNumber
 unsafeStringToInt :: String -> Int
 unsafeStringToInt stringToConvert = read stringToConvert :: Int
 
+-- split string with char, first replaces chosen character with spaces, uses words  function to split
 split :: String ->Char -> [String]
 split [] c= []
 split stringToSplit c = 	if not (c `elem` stringToSplit) then [stringToSplit]
-			else  words(changeChar stringToSplit c ' ')
+			else  words(replaceChar stringToSplit c ' ')
 
-changeChar :: String -> Char ->Char -> String
-changeChar [] _ _ = []
-changeChar (x:xs) old new = 	if x == old then new:(changeChar xs old new)
-				else x:(changeChar xs old new)
+replaceChar :: String -> Char ->Char -> String
+replaceChar [] _ _ = []
+replaceChar (x:xs) old new = 	if x == old then new:(replaceChar xs old new)
+				else x:(replaceChar xs old new)
 
 countChar :: Char -> String -> Int
 countChar c [x]
@@ -71,11 +74,13 @@ countChar c (x:xs)
 	| c == x 	= 1 + countChar c xs
 	| otherwise   	= 0 + countChar c xs
 
-
+-- get current date as IO String
 date :: IO String 
 date = do
 	fmap (showGregorian . utctDay) getCurrentTime
 
+-- args: date in format yyyy:mm:dd
+-- return wheter days are equal in case of birthday: day & month is equal
 isDateBirthdailyEqual::String -> String -> Bool
 isDateBirthdailyEqual [] [] = False
 isDateBirthdailyEqual dateString1 dateString2 = validDate dateString1 && validDate dateString2 && (drop 5 dateString1) == (drop 5 dateString2)
