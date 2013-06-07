@@ -10,6 +10,16 @@ data ContactBook = ContactBook { contacts :: [Contact]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						CONTACT LIST
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+createContact::ContactBook->String->String->String->String->String->String->Contact
+createContact book name surname company number email  birthdate = Contact id name surname company number email  birthdate
+	where 	id = nextId book
+
+nextId ::ContactBook ->String
+nextId (ContactBook [] g) = "0"
+nextId (ContactBook [c] g) = show(1+Utils.unsafeStringToInt(Contact.ident c)) 
+nextId (ContactBook (contacts) g) = show(1+Utils.unsafeStringToInt (Contact.ident (maximum contacts)))
+
 addContact :: ContactBook -> Contact -> ContactBook
 addContact (ContactBook contactList g) new = ContactBook (new:contactList) g
 

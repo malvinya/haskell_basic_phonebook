@@ -165,48 +165,35 @@ showAllContacts(ContactBook contacts groups) = do
 
 addContactForm book@(ContactBook contacts groups) = do
 	putStrLn "ADD CONTACT:"
-	putStrLn "ID:"
-	ident <- getLine
-	if ident `elem` ["b", "B"] then do
-		contactsMenu book	
+	putStrLn "First name:"
+	name <- getLine
+	if not (Utils.validString name) then do addContactInputError book "First name should contain letters only."
 	else do
-		if  not (Utils.validNumber ident) then do
-			putStrLn "ID should be a number. Try again"
-			addContactForm book
-		else do
-			if isAMemberById book ident then do
-				putStrLn "ID is already used"
-				addContactForm book
+		putStrLn "Surname:"
+		surname <- getLine
+		if not (Utils.validString surname) then do addContactInputError book "Surname should contain letters only."
+		else do 
+			putStrLn "Company:"
+			company <- getLine
+			if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
 			else do
-				putStrLn "First name:"
-				name <- getLine
-				if not (Utils.validString name) then do addContactInputError book "First name should contain letters only."
+				putStrLn "Phone Number:"
+				phoneNumber <- getLine
+				if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
 				else do
-					putStrLn "Surname:"
-					surname <- getLine
-					if not (Utils.validString surname) then do addContactInputError book "Surname should contain letters only."
-					else do 
-						putStrLn "Company:"
-						company <- getLine
-						if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
+					putStrLn "Email:"
+					email <- getLine
+					if not (Utils.validEmail email) then do addContactInputError book "Incorrect email address."
+					else do
+						putStrLn "Birthdate (yyyy-mm-dd):"
+						birthday <- getLine
+						if not (Utils.validDate birthday) then do addContactInputError book "Date format incorrect (yyyy-mm-dd)."
 						else do
-							putStrLn "Phone Number:"
-							phoneNumber <- getLine
-							if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
-							else do
-								putStrLn "Email:"
-								email <- getLine
-								if not (Utils.validEmail email) then do addContactInputError book "Incorrect email address."
-								else do
-									putStrLn "Birthdate (yyyy-mm-dd):"
-									birthday <- getLine
-									if not (Utils.validDate birthday) then do addContactInputError book "Date format incorrect (yyyy-mm-dd)."
-									else do
-										let newContact = Contact.Contact ident name surname company phoneNumber email birthday
-										putStrLn "Success."
-										putStrLn "New contact added:"
-										printContact newContact
-										contactsMenu(addContact book newContact)
+							let newContact = createContact book name surname company phoneNumber email birthday
+							putStrLn "Success."
+							putStrLn "New contact added:"
+							printContact newContact
+							contactsMenu(addContact book newContact)
 
 addContactInputError book@(ContactBook contacts groups) message = do
 	putStr "Couldn't add contact: "

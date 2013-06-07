@@ -1,4 +1,5 @@
 module Contact where
+
 data Contact = Contact { ident :: String
 	                      , firstname :: String
 	                      , surname :: String
@@ -7,6 +8,10 @@ data Contact = Contact { ident :: String
 	                      , email :: String
 	                      , birthdate :: String
 	                      } deriving (Show,Read,Eq)
+
+
+instance Ord Contact where
+  (Contact id1 _ _ _ _ _ _) `compare` (Contact id2 _ _ _ _ _ _) = id1 `compare` id2
 
 printContact (Contact ident name surname company number email  birthdate) = do
 	let string = ident ++ ". Name: " ++ name ++ " " ++ surname ++ " Company: " ++ company ++ " Phone: " ++ number ++ 
