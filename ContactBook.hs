@@ -99,7 +99,7 @@ getContactListByIdList book@(ContactBook contactList g) (first:ids) = (getContac
 getContactListByTodaysBirthDay::ContactBook->String->[Contact]
 getContactListByTodaysBirthDay  (ContactBook [] g) date = []
 getContactListByTodaysBirthDay  (ContactBook contacts g) date =filter p contacts
-	where  p x = not(isDateBirthdailyEqual (Contact.birthdate x ) date)
+	where  p x = (isDateBirthdailyEqual (Contact.birthdate x ) date)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --						GROUP LIST

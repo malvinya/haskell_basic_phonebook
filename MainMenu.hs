@@ -31,7 +31,7 @@ mainMenu book@(ContactBook contacts groups) = do
 		"4"	-> birthdayMenu book 
 		"5"	-> do
 				writeFile "contactbook.txt" (show book)
-				putStr "The changes have been saved. See you later!"
+				putStr "The changes have been saved. See you later!\n"
 				return()
 		otherwise -> do 
 				putStr "Wrong input. Press '1'...'5' to choose option:"
@@ -144,8 +144,8 @@ searchMenu book@(ContactBook contacts groups) = do
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 birthdayMenu book@(ContactBook contacts groups)  = do
 	putStrLn ""
-	putStrLn "---------------------------------------------------------TODAY'S BIRTHDAY---------------------------------------------------------" 
 	dateString <-Utils.date
+	putStrLn $ "---------------------------------------------------TODAY'S BIRTHDAY: "++dateString++"---------------------------------------------------" 
 	let birthdayList = getContactListByTodaysBirthDay book dateString
 	if null (birthdayList) then do 
 		putStrLn "Such a sad day. Nobody's celebrating!"
@@ -165,35 +165,17 @@ showAllContacts(ContactBook contacts groups) = do
 
 addContactForm book@(ContactBook contacts groups) = do
 	putStrLn "ADD CONTACT:"
-	putStrLn "First name:"
-	name <- getLine
-	if not (Utils.validString name) then do addContactInputError book "First name should contain letters only."
-	else do
-		putStrLn "Surname:"
-		surname <- getLine
-		if not (Utils.validString surname) then do addContactInputError book "Surname should contain letters only."
-		else do 
-			putStrLn "Company:"
-			company <- getLine
-			if not (Utils.validString company) then do addContactInputError book "Company name should contain letters only."
-			else do
-				putStrLn "Phone Number:"
-				phoneNumber <- getLine
-				if not (Utils.validNumber phoneNumber) then do addContactInputError book "Phone number should contain digits only."
-				else do
-					putStrLn "Email:"
-					email <- getLine
-					if not (Utils.validEmail email) then do addContactInputError book "Incorrect email address."
-					else do
-						putStrLn "Birthdate (yyyy-mm-dd):"
-						birthday <- getLine
-						if not (Utils.validDate birthday) then do addContactInputError book "Date format incorrect (yyyy-mm-dd)."
-						else do
-							let newContact = createContact book name surname company phoneNumber email birthday
-							putStrLn "Success."
-							putStrLn "New contact added:"
-							printContact newContact
-							contactsMenu(addContact book newContact)
+	name <- getName
+	surname <- getSurname
+	company <- getCompany
+	phoneNumber <-getPhoneNumber
+	email <- getEmail
+	birthday <- getBirthdate	
+	let newContact = createContact book name surname company phoneNumber email birthday
+	putStrLn "Success."
+	putStrLn "New contact added:"
+	printContact newContact
+	contactsMenu(addContact book newContact)
 
 addContactInputError book@(ContactBook contacts groups) message = do
 	putStr "Couldn't add contact: "
@@ -304,65 +286,135 @@ showGroupForm book@(ContactBook contacts groups) = do
 	printGroups book
 	putStr "SHOW GROUP with NAME:"
 	name <- getLine
-	if groupExistsByName book name then do
-		putStrLn name
-		putStrLn "Members:"
-		print (showGroupMembers book name)
-		--print (getGroupByName book name)
+	if name `elem` ["B", "b"] then do 
 		groupsMenu book
 	else do
-		putStrLn "The group with the given name doesn't exist. Try again."
-		showGroupForm book
+		if groupExistsByName book name then do
+			putStrLn name
+			putStrLn "Members:"
+			print (showGroupMembers book name)
+			groupsMenu book
+		else do
+			putStrLn "The group with the given name doesn't exist. Try again."
+			showGroupForm book
 
 addGroupForm book@(ContactBook contacts groups) = do
 	printGroups book
 	putStr "ADD GROUP with NAME:"
 	name <- getLine
-	if not (groupExistsByName book name) then do
-		groupsMenu(addEmptyGroup book name)
+	if name `elem` ["B", "b"] then do 
+		groupsMenu book
 	else do
-		putStrLn "The group with the given name already exists. Try again with different name."
-		addGroupForm book
+		if not (groupExistsByName book name) then do
+			groupsMenu(addEmptyGroup book name)
+		else do
+			putStrLn "The group with the given name already exists. Try again with different name."
+			addGroupForm book
 
 deleteGroupForm book@(ContactBook contacts groups)  = do
 	printGroups book
 	putStr "DELETE GROUP with NAME:"
 	name <- getLine
-	if groupExistsByName book name then do
-		groupsMenu(removeGroup book name)
+	if name `elem` ["B", "b"] then do 
+		groupsMenu book
 	else do
-		putStrLn "The group with the given name doesn't exist. Try again."
-		deleteGroupForm book
+		if groupExistsByName book name then do
+			groupsMenu(removeGroup book name)
+		else do
+			putStrLn "The group with the given name doesn't exist. Try again."
+			deleteGroupForm book
 
 
 editGroupForm book@(ContactBook contacts groups) = do
 	printGroups book
 	putStr "RENAME GROUP with NAME:"
 	name <- getLine
-	if groupExistsByName book name then do
-		putStr "New name: "
-		newName<- getLine
-		groupsMenu(renameGroup book name newName)
+	if name `elem` ["B", "b"] then do 
+		groupsMenu book
 	else do
-		putStrLn "The group with the given name doesn't exist. Try again."
-		editGroupForm book
+		if groupExistsByName book name then do
+			putStr "New name: "
+			newName<- getLine
+			groupsMenu(renameGroup book name newName)
+		else do
+			putStrLn "The group with the given name doesn't exist. Try again."
+			editGroupForm book
 
 joinGroupsForm book@(ContactBook contacts groups) = do
 	printGroups book
 	putStrLn "JOIN GROUPS"
 	putStr "First group: "
 	group1 <- getLine
-	if groupExistsByName book group1 then do
-		putStr "Second group: "
-		group2<- getLine
-		groupsMenu(joinGroups book group1 group2)
+	if group1 `elem` ["B", "b"] then do 
+		groupsMenu book
 	else do
-		putStrLn "The group with the given name doesn't exist. Try again."
-		joinGroupsForm book		
+		if groupExistsByName book group1 then do
+			putStr "Second group: "
+			group2<- getLine
+			if group2 `elem` ["B", "b"] then do 
+				groupsMenu book
+			else do
+				groupsMenu(joinGroups book group1 group2)
+		else do
+			putStrLn "The group with the given name doesn't exist. Try again."
+			joinGroupsForm book		
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--						CONTACT INPUT ACTIONS
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+getName = do
+	putStrLn "First name:"
+	name <- getLine
+	if Utils.validString name then do 
+		return name
+	else do
+		putStrLn "First name should contain letters only."
+		getName
 
+getSurname = do
+	putStrLn "Surname:"
+	surname <- getLine
+	if Utils.validString surname then do 
+		return surname
+	else do
+		putStrLn "Surname should contain letters only."
+		getSurname
 
+getCompany = do
+	putStrLn "Company:"
+	company <- getLine
+	if Utils.validString company then do
+		return company
+	else do
+		putStrLn "Company name should contain letters only." 
+		getCompany
 
+getEmail = do
+	putStrLn "Email:"
+	email <- getLine
+	if Utils.validEmail email then do 
+		return email
+	else do
+		putStrLn "Incorrect email address."
+		getEmail
 
+getPhoneNumber = do
+	putStrLn "Phone Number:"
+	phoneNumber <- getLine
+	if Utils.validNumber phoneNumber then do 
+		return phoneNumber
+	else do
+		putStrLn "Phone number should contain digits only."
+		getPhoneNumber
+	
+
+getBirthdate = do
+	putStrLn "Birthdate (yyyy-mm-dd):"
+	birthday <- getLine
+	if Utils.validDate birthday then do
+		return birthday	
+	else do 
+		putStrLn "Date format incorrect (yyyy-mm-dd)."
+		getBirthdate
